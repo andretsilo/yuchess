@@ -9,7 +9,7 @@ import com.yuchess.users.business.entity.User;
 
 @RequestMapping("/auth")
 @RestController
-public class AuthController {
+public class UserController {
 
 	@PostMapping("/signup")
 	public ResponseEntity<User> signUpUser() {

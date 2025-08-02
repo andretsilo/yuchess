@@ -1,7 +1,7 @@
 package com.yuchess.users.business.enums;
 
 public enum Country {
-	USA("United States of America"),
+    USA("United States of America"),
     AFGHANISTAN("Afghanistan"),
     ALBANIA("Albania"),
     ALGERIA("Algeria"),
