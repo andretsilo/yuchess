@@ -6,6 +6,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.yuchess.users.business.entity.User;
 
-public interface IUserRepository extends CrudRepository<User, Long> {
+public interface UserRepository extends CrudRepository<User, Long> {
 	Optional<User> findByUsername(String username);
 }

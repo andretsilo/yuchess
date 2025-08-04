@@ -1,15 +1,15 @@
 package com.yuchess.users.business.security;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
+import com.yuchess.users.business.util.JwtUtil;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,45 +18,38 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
-    public JWTAuthorizationFilter(AuthenticationManager authenticationManager) {
-	super(authenticationManager);
-    }
+	private final JwtUtil jwtUtil;
+	private final UserDetailsService userDetailsService;
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
-	    throws IOException, ServletException {
-	String header = req.getHeader("hello" /* TODO: add token header from properties */);
-
-	if (header == null || !header.startsWith(" " /* TODO: add token prexif */)) {
-	    chain.doFilter(req, res);
-	    return;
+	public JWTAuthorizationFilter(AuthenticationManager authManager, JwtUtil jwtUtil,
+			UserDetailsService userDetailsService) {
+		super(authManager);
+		this.jwtUtil = jwtUtil;
+		this.userDetailsService = userDetailsService;
 	}
 
-	UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
 
-	SecurityContextHolder.getContext().setAuthentication(authentication);
-	chain.doFilter(req, res);
-    }
+		String header = request.getHeader("Authorization");
 
-    // Reads the JWT from the Authorization header, and then uses JWT to validate
-    // the token
-    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-	String token = request.getHeader(" " /* TODO: add token header */);
+		if (header == null || !header.startsWith("Bearer ")) {
+			chain.doFilter(request, response);
+			return;
+		}
 
-	if (token != null) {
-	    // parse the token.
-	    String user = JWT.require(Algorithm.HMAC512(" " /* TODO: add secret */)).build()
-		    .verify(token.replace(" " /* TODO: add token header */, "")).getSubject();
+		String token = header.substring(7);
+		String username = jwtUtil.extractUsername(token);
 
-	    if (user != null) {
-		// new arraylist means authorities
-		return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
-	    }
+		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+			UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+			UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null,
+					userDetails.getAuthorities());
 
-	    return null;
+			SecurityContextHolder.getContext().setAuthentication(auth);
+		}
+
+		chain.doFilter(request, response);
 	}
-
-	return null;
-    }
-
 }
