@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.yuchess.users.business.IUserService;
 import com.yuchess.users.business.mapper.UserMapper;
+import com.yuchess.users.business.repository.UserRepository;
 import com.yuchess.users.server.dto.UserDto;
 
 import jakarta.transaction.Transactional;
@@ -21,16 +22,15 @@ public class UserServiceImpl implements IUserService {
 	@Autowired
 	UserMapper mapper;
 
-//	@Autowired
-//	private UserRepository repository;
+	@Autowired
+	private UserRepository repository;
 
 	@Override
-	@Transactional(rollbackOn = Exception.class)
+	@Transactional
 	public String saveUser(UserDto dto) {
 		dto.setPassword(passwordEncoder.encode(dto.getPassword()));
-		System.out.println(mapper.toEntity(dto).toString());
-		return "Saved user: " + mapper.toEntity(dto);
-		// return repository.save(mapper.toEntity(dto)).getId().toString();
+		log.info("Created entity: {}", mapper.toEntity(dto).getId());
+		return repository.save(mapper.toEntity(dto)).getId().toString();
 	}
 
 }
