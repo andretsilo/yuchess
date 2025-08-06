@@ -37,8 +37,9 @@ public class WebSecurity {
 
 		return http.csrf(csrf -> csrf.disable())
 				.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/api/login", "/api/signup").permitAll()
-						.anyRequest().authenticated())
+				.authorizeHttpRequests(
+						auth -> auth.requestMatchers("/api/login", "/api/signup", "/swagger-ui/**", "/v3/api-docs/**")
+								.permitAll().anyRequest().authenticated())
 				.authenticationManager(authManager).addFilter(authFilter)
 				.addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class).build();
 	}
