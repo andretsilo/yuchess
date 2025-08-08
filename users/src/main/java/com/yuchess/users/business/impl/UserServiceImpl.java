@@ -8,6 +8,7 @@ import com.yuchess.users.business.IUserService;
 import com.yuchess.users.business.mapper.UserMapper;
 import com.yuchess.users.business.repository.UserRepository;
 import com.yuchess.users.server.dto.UserDto;
+import com.yuchess.users.server.response.PlayerResponse;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,11 @@ public class UserServiceImpl implements IUserService {
 		dto.setPassword(passwordEncoder.encode(dto.getPassword()));
 		log.info("Created entity: {}", mapper.toEntity(dto).getId());
 		return repository.save(mapper.toEntity(dto)).getId().toString();
+	}
+
+	@Override
+	public PlayerResponse getUser(String username) {
+		return mapper.toResponse(repository.findByUsername(username).orElse(null));
 	}
 
 }
