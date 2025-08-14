@@ -8,7 +8,6 @@ import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -37,6 +36,8 @@ public class MatchmakingServiceImpl implements IMatchmakingService {
 
     Map<EloRange, Queue<PlayerDto>> queuesMap = new ConcurrentHashMap<EloRange, Queue<PlayerDto>>();
 
+    private Boolean matchmakingEnabled = Boolean.FALSE;
+
     @PostConstruct
     public void init() {
 	Arrays.stream(EloRange.values()).forEach(o -> queuesMap.put(o, new ConcurrentLinkedQueue<PlayerDto>()));
@@ -44,6 +45,9 @@ public class MatchmakingServiceImpl implements IMatchmakingService {
 
     @Override
     public void joinQueue(String username, Mode mode) {
+
+	matchmakingEnabled = Boolean.TRUE;
+
 	RestTemplate restTemplate = new RestTemplate();
 	PlayerDto dto = restTemplate.getForObject(BASE_URL.concat("/").concat(username), PlayerDto.class);
 	dto.setMode(mode);
@@ -52,27 +56,31 @@ public class MatchmakingServiceImpl implements IMatchmakingService {
 	Thread thread = new Thread(getJoinQueueThread(dto, mode));
 	thread.start();
 	log.info("Added player in matching queue: {}", dto.getUsername());
+
     }
 
-    @Scheduled(fixedRate = 1000)
+    @Scheduled(fixedRate = 1500)
     public void attemptMatchmaking() {
 
-	List<GameRequest> gameRequests = new ArrayList<GameRequest>();
+	if (matchmakingEnabled) {
 
-	Arrays.stream(EloRange.values()).forEach(range -> {
-	    PlayerDto playerOne = queuesMap.get(range).poll();
-	    PlayerDto playerTwo = queuesMap.get(range).stream().filter(o -> playerOne.getMode().equals(o.getMode()))
-		    .findFirst().orElse(null);
-	    GameRequest gameRequest = new GameRequest(UUID.randomUUID().toString(), playerOne, playerTwo,
-		    playerOne.getMode(), playerOne.getUsername());
-	    gameRequests.add(gameRequest);
-	});
+	    List<GameRequest> gameRequests = new ArrayList<GameRequest>();
 
-	gameRequests.stream().filter(o -> o.getPlayerOne() != null && o.getPlayerTwo() != null)
-		.collect(Collectors.toList()).forEach(request -> {
-		    // TODO: send ws request
-		});
-	;
+	    Arrays.stream(EloRange.values()).forEach(range -> {
+		PlayerDto playerOne = queuesMap.get(range).poll();
+		PlayerDto playerTwo = queuesMap.get(range).stream().filter(o -> playerOne.getMode().equals(o.getMode()))
+			.findFirst().orElse(null);
+		GameRequest gameRequest = new GameRequest(UUID.randomUUID().toString(), playerOne, playerTwo,
+			playerOne.getMode(), playerOne.getUsername());
+
+		gameRequests.add(gameRequest);
+	    });
+
+	    gameRequests.stream().filter(o -> o.getPlayerOne() != null && o.getPlayerTwo() != null).forEach(o -> {
+		log.info("Sending webSocket request with payload: {}", o.toString());
+	    });
+
+	}
 
     }
 
