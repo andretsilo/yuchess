@@ -2,7 +2,9 @@ package com.yuchess.matchmaking.server.dto;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yuchess.matchmaking.business.enums.Country;
+import com.yuchess.matchmaking.business.enums.Mode;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,15 +15,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PlayerDto implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1604797131356432550L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1604797131356432550L;
 
-	String username;
-	Country country;
-	Long eloBullet;
-	Long eloRapid;
-	Long eloClassic;
+    String username;
+    Country country;
+    Long eloBullet;
+    Long eloRapid;
+    Long eloClassic;
+    @JsonIgnore
+    Mode mode;
 
 }
