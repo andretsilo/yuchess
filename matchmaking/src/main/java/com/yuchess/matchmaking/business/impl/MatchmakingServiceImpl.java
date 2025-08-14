@@ -26,10 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class MatchmakingServiceImpl implements IMatchmakingService {
-    /*
-     * 1. Create thread to join queue (producer) 2. Create thread to poll queue 3.
-     * Create request to ws server
-     */
 
     @Value("${yuchess.users.url}")
     String BASE_URL;
