@@ -16,21 +16,21 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class UserServiceImpl implements IUserService {
 
-	@Autowired
-	BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    BCryptPasswordEncoder passwordEncoder;
 
-	@Autowired
-	UserMapper mapper;
+    @Autowired
+    UserMapper mapper;
 
-	@Autowired
-	private UserRepository repository;
+    @Autowired
+    private UserRepository repository;
 
-	@Override
-	@Transactional
-	public String saveUser(UserDto dto) {
-		dto.setPassword(passwordEncoder.encode(dto.getPassword()));
-		log.info("Created entity: {}", mapper.toEntity(dto).getId());
-		return repository.save(mapper.toEntity(dto)).getId().toString();
-	}
+    @Override
+    @Transactional
+    public String saveUser(UserDto dto) {
+	dto.setPassword(passwordEncoder.encode(dto.getPassword()));
+	log.info("Created entity: {}", mapper.toEntity(dto).getId().toString());
+	return repository.save(mapper.toEntity(dto)).getId().toString();
+    }
 
 }

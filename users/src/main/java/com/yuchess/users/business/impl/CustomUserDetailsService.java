@@ -17,15 +17,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-	private final UserRepository repository;
+    private final UserRepository repository;
 
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = repository.findByUsername(username)
-				.orElseThrow(() -> new UsernameNotFoundException("User " + username + "not found."));
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	User user = repository.findByUsername(username)
+		.orElseThrow(() -> new UsernameNotFoundException("User " + username + "not found."));
 
-		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
-				Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
-	}
+	return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
+		Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+    }
 
 }
