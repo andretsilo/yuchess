@@ -29,11 +29,8 @@ public class UserServiceImpl implements IUserService {
     @Transactional
     public String saveUser(UserDto dto) {
 	dto.setPassword(passwordEncoder.encode(dto.getPassword()));
-	log.info("Created entity: {}", mapper.toEntity(dto).getId());
-	if (repository.findByUsername(dto.getUsername()) == null) {
-	    return repository.save(mapper.toEntity(dto)).getId().toString();
-	}
-	return null;
+	log.info("Created entity: {}", mapper.toEntity(dto).getId().toString());
+	return repository.save(mapper.toEntity(dto)).getId().toString();
     }
 
 }
