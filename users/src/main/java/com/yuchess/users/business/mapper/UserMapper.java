@@ -4,14 +4,17 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import com.yuchess.users.business.entity.User;
+import com.yuchess.users.server.dto.QueueJoinUserDto;
 import com.yuchess.users.server.dto.UserDto;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-	@Mapping(target = "eloBullet", constant = "800L")
-	@Mapping(target = "eloRapid", constant = "800L")
-	@Mapping(target = "eloClassic", constant = "800L")
-	User toEntity(UserDto source);
+    @Mapping(target = "eloBullet", constant = "800L")
+    @Mapping(target = "eloRapid", constant = "800L")
+    @Mapping(target = "eloClassic", constant = "800L")
+    User toEntity(UserDto source);
+
+    QueueJoinUserDto toDto(User user);
 
 }
