@@ -7,4 +7,5 @@ import lombok.Data;
 @Data
 public class ModeDto {
     QueueType mode;
+    String token;
 }
