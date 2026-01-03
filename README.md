@@ -1,8 +1,7 @@
-# 🏆 YuChess
+# YuChess
 
 [![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://www.oracle.com/java/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.4-brightgreen.svg)](https://spring.io/projects/spring-boot)
-[![WebSocket](https://img.shields.io/badge/WebSocket-Enabled-blue.svg)](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
 
 A modern, real-time chess web server built with Spring Boot and WebSockets, featuring microservices architecture for scalable online chess gameplay.
 
@@ -155,19 +154,6 @@ cd games
 ### Users Service (Port 8080)
 - `POST /api/users/register` - User registration
 - `POST /api/users/login` - User authentication
-- `GET /api/users/profile` - Get user profile
-- `PUT /api/users/profile` - Update user profile
-
-### Matchmaking Service (Port 8081)
-- `POST /api/matchmaking/join` - Join matchmaking queue
-- `DELETE /api/matchmaking/leave` - Leave matchmaking queue
-- `GET /api/matchmaking/status` - Get queue status
-
-### Games Service (Port 8082)
-- `POST /api/games/create` - Create new game
-- `POST /api/games/{gameId}/join` - Join existing game
-- `POST /api/games/{gameId}/move` - Make a move
-- `GET /api/games/{gameId}` - Get game state
 
 ## 🔌 WebSocket Endpoints
 
